@@ -3,6 +3,7 @@ gdemu.sdf
 gdemu.opensdf
 gdemu.*.sdf
 gdemu.*.opensdf
+gdemu.vs2010.*
 
 #ignore thumbnails created by windows
 Thumbs.db

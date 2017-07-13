@@ -37,8 +37,97 @@
 #define COL2 6 //FIO PRETO - JOYSTICK DOWN
 #define COL3 7 // FIO LARANJA - JOYSTICK RIGHT
 
+
+// Matriz do mapa
+
+map[][] = {
+	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+};
+
 long lastAnimTime = 0;
 int animTime = 50;
+
+
+// Draws map
+// Obs.: code is just an example
+void draw_map()
+{
+	//                .  ?  i  n  k  b  r  q  ?  I  ?  N  K  B  R  Q
+	byte xlat[] = { 0, 0, 0, 1, 5, 2, 3, 4, 0, 6, 0, 7, 11,8, 9,10 };
+
+	for (int i = 0; i < MOVETIME; i++) {
+		GD.cmd_gradient(0, 0, 0x101010, 480, 272, 0x202060);
+		GD.cmd_bgcolor(0x101020);
+
+		GD.Begin(BITMAPS);
+		GD.SaveContext();
+		GD.ColorRGB(0xfff0c0);
+		GD.ColorA(0xc0);
+		GD.cmd_scale(F16(32), F16(32));
+		GD.cmd_setmatrix();
+		GD.Vertex2ii(32, 8, 1, 0);
+		GD.RestoreContext();
+
+		int moving = -1;
+		if (c[0])
+			moving = 16 * ('8' - c[3]) + (c[2] - 'a');
+
+		GD.Begin(BITMAPS);
+		GD.ColorRGB(0xe0e0e0);
+		for (int y = 0; y < 8; y++)
+			for (int x = 0; x < 8; x++) {
+				int pos = 16 * y + x;
+				byte piece = b[pos] & 15;
+				if (pos != moving && piece != 0)
+					GD.Vertex2ii(32 + 32 * x, 8 + 32 * y, 0, xlat[piece]);
+			}
+
+		if (c[0]) {
+			GD.Begin(BITMAPS);
+			byte piece = b[moving] & 15;
+			GD.Cell(xlat[piece]);
+			GD.ColorA((255 / OVERSAMPLE) + 50);
+			int x0, y0, x1, y1;
+			p2(x0, y0, c + 0);
+			p2(x1, y1, c + 2);
+			GD.ColorRGB(0xffffff);
+			for (int j = 0; j < OVERSAMPLE; j++) {
+				byte linear = 255 * (i * OVERSAMPLE + j) / (OVERSAMPLE * MOVETIME - 1);
+				byte scurve = sinus(linear);
+				int x = x0 + (long)(x1 - x0) * scurve / 255;
+				int y = y0 + (long)(y1 - y0) * scurve / 255;
+
+				GD.Vertex2f(x, y);
+			}
+			GD.ColorA(255);
+		}
+
+		GD.ColorRGB((k == 16) ? 0xffffffUL : 0x606060);
+		GD.cmd_clock(384, 60, 50, OPT_FLAT | OPT_NOSECS, 0, 0, clocks[0], 0);
+		GD.ColorRGB((k != 16) ? 0xffffffUL : 0x606060);
+		GD.cmd_clock(384, 272 - 60, 50, OPT_FLAT | OPT_NOSECS, 0, 0, clocks[1], 0);
+
+		GD.ColorRGB(0xffffff);
+		GD.cmd_text(384, 136, 30, OPT_CENTER, c);
+
+		GD.swap();
+	}
+}
 
 void readn(byte *dst, unsigned int addr, int c)
 {

@@ -138,3 +138,6 @@ moc_*.cpp
 *.7z
 #external
 #3rdParty
+gdemu.vs2010.VC.VC.opendb
+gdemu.vs2010.VC.db
+gdemu.vs2010.VC.db

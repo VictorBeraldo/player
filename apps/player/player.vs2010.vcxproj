@@ -102,10 +102,7 @@
     <ClCompile Include="player.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="flappyBird.h" />
-    <ClInclude Include="image.h" />
     <ClInclude Include="mont.h" />
-    <ClInclude Include="walter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\gdemu\gdemu.vs2010.vcxproj">

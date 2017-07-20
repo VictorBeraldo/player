@@ -4,8 +4,8 @@ static void draw_sprites(int x, int y, byte anim, byte rot, byte jk = 0)
 	switch (anim) {
 
 	case 0:
-		GD.xsprite(x, y, -8, -16, 0, 4, rot, jk);
-		GD.xsprite(x, y, -8, 0, 0, 6, rot, jk);
+		//GD.xsprite(x, y, -8, -16, 0, 4, rot, jk);
+		//GD.xsprite(x, y, -8, 0, 0, 6, rot, jk);
 		break;
 	case 1:
 		GD.xsprite(x, y, -8, -16, 1, 4, rot, jk);
@@ -152,7 +152,6 @@ static void draw_sprites(int x, int y, byte anim, byte rot, byte jk = 0)
 		GD.xsprite(x, y, -8, -16, 31, 6, rot, jk);
 		GD.xsprite(x, y, -8, 0, 32, 4, rot, jk);
 		break;
-
 	}
 }
 

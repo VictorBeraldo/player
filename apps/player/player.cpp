@@ -67,6 +67,11 @@ const int num_of_blocks_y = 9;
 const int size_x = 400;
 const int size_y = 300;
 
+// Número de frames necessários para aparecer um novo bloco na tela
+const int frames_per_block = 100000;
+
+int frame_count = 0;
+
 // Tamanho dos blocos: 34x34
 
 // -----------------------------> Biblioteca de Controles de Teclado <------------------------
@@ -145,8 +150,6 @@ void setup()
 
 // -----------------------------> Loop <------------------------
 
-int count2 = 0;
-
 void loop() {
 
 	// Desenha mapa
@@ -161,7 +164,7 @@ void loop() {
 
 			// Desenha sprite de acordo com o código que estiver na matriz
 			draw_sprites(
-				size_x * i / (num_of_blocks_x - 1), 
+				size_x * i / (num_of_blocks_x - 1) - (size_x / num_of_blocks_x) * frame_count / frames_per_block,
 				size_y * j / (num_of_blocks_y - 1), 
 				mapa[mapa_indice + mapa_indice_incremento][j][i + bloco_indice - mapa_indice_incremento * mapa_x], 
 				0
@@ -172,16 +175,21 @@ void loop() {
 
 	GD.__end();
 
-	count2++;
 
-	if (count2 >= 100000) {
-		count2 = 0;
+	// Contadores de tempo
 
+	frame_count++;
+
+	if (frame_count >= frames_per_block) {
+
+		frame_count = 0;
 		bloco_indice++;
 
 		if (bloco_indice >= mapa_x) {
+
 			mapa_indice++;
 			bloco_indice = 0;
+
 		}
 
 	}

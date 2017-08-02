@@ -48,10 +48,13 @@ int mapa[mapa_z][mapa_y][mapa_x] = {
 };
 
 // Índice do mapa atual
-int mapa_indice = 0;
+int mapa_atual = 0;
+
+// Índice do próximo mapa
+int mapa_proximo = 1;
 
 // Permite mostrar dois mapas de dois índices distintos na mesma tela
-int mapa_indice_incremento = 0;
+int mapa_atual_incremento = 0;
 
 // Índice do primeiro bloco do mapa no lado esquerdo da tela
 int bloco_indice = 0;
@@ -71,6 +74,8 @@ const int size_y = 300;
 const int frames_per_block = 100000;
 
 int frame_count = 0;
+
+int next_map(int a);
 
 // Tamanho dos blocos: 34x34
 
@@ -153,20 +158,16 @@ void setup()
 void loop() {
 
 	// Desenha mapa
-
 	GD.__wstartspr(0);
 
 	for (int i = 0; i < num_of_blocks_x; i++) {
 		for (int j = 0; j < num_of_blocks_y; j++) {
 
-			// Aumenta o índice se passar do último elemento de uma matriz para desenhar os elementos da próxima
-			mapa_indice_incremento = (i + bloco_indice) / mapa_x;
-
 			// Desenha sprite de acordo com o código que estiver na matriz
 			draw_sprites(
-				size_x * i / (num_of_blocks_x - 1) - (size_x / num_of_blocks_x) * frame_count / frames_per_block,
+				size_x * i / (num_of_blocks_x - 1) - (size_x * ((float) frame_count / (float) frames_per_block) / (num_of_blocks_x - 1)),
 				size_y * j / (num_of_blocks_y - 1), 
-				mapa[mapa_indice + mapa_indice_incremento][j][i + bloco_indice - mapa_indice_incremento * mapa_x], 
+				mapa[0/*(i + bloco_indice < mapa_x) ? mapa_atual : mapa_proximo*/][j][(i + bloco_indice) % mapa_x],
 				0
 			);
 
@@ -174,7 +175,6 @@ void loop() {
 	};
 
 	GD.__end();
-
 
 	// Contadores de tempo
 
@@ -185,12 +185,23 @@ void loop() {
 		frame_count = 0;
 		bloco_indice++;
 
-		if (bloco_indice >= mapa_x) {
-
-			mapa_indice++;
+		if (bloco_indice > mapa_x) {
 			bloco_indice = 0;
-
+			mapa_atual = mapa_proximo;
 		}
 
+		if (bloco_indice - num_of_blocks_x + 1 == mapa_x)
+			mapa_proximo = next_map(mapa_atual);
+
 	}
+}
+
+// -----------------------------> Métodos <------------------------
+
+// Retorna tema do próximo mapa
+
+int next_map(int current_map) {
+
+	return current_map++;
+
 }
